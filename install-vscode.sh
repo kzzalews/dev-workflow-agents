@@ -89,19 +89,16 @@ for f in "${AGENT_FILES[@]}"; do
 done
 
 # VS Code also loads agents from ~/.claude/agents/ (Claude-compatible global path).
-# Install dev-workflow there so it is visible alongside the other pipeline agents,
-# which are already placed in ~/.claude/agents/ by install-claude-code.sh.
+# Install all 4 agents there so VS Code finds them regardless of whether
+# Claude Code is installed. If Claude Code is also installed its own copies
+# of coordinator/executor/verifier will coexist without conflict.
 CLAUDE_AGENTS_DST="$HOME/.claude/agents"
-if [[ -d "$CLAUDE_AGENTS_DST" ]]; then
-  echo ""
-  echo "Installing dev-workflow to Claude agents dir ($CLAUDE_AGENTS_DST)..."
-  copy_with_prompt "$REPO_DST/claude-code/agents/dev-workflow.md" "$CLAUDE_AGENTS_DST/dev-workflow.md"
-else
-  echo ""
-  echo "Creating Claude agents dir and installing dev-workflow ($CLAUDE_AGENTS_DST)..."
-  mkdir -p "$CLAUDE_AGENTS_DST"
-  copy_with_prompt "$REPO_DST/claude-code/agents/dev-workflow.md" "$CLAUDE_AGENTS_DST/dev-workflow.md"
-fi
+echo ""
+echo "Installing agents to Claude agents dir ($CLAUDE_AGENTS_DST)..."
+mkdir -p "$CLAUDE_AGENTS_DST"
+for f in "${AGENT_FILES[@]}"; do
+  copy_with_prompt "$REPO_DST/claude-code/agents/$f.md" "$CLAUDE_AGENTS_DST/$f.md"
+done
 
 echo ""
 echo "Done."

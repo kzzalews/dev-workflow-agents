@@ -29,7 +29,9 @@ for f in "${AGENT_FILES[@]}"; do
   fi
 done
 
-# Also remove dev-workflow from ~/.claude/agents/ if installed there
+# Remove only dev-workflow from ~/.claude/agents/ — coordinator/executor/verifier
+# are left untouched there since they may have been installed by install-claude-code.sh.
+# Run uninstall-claude-code.sh separately to remove those.
 CLAUDE_AGENT="$HOME/.claude/agents/dev-workflow.md"
 if [[ -f "$CLAUDE_AGENT" ]]; then
   rm "$CLAUDE_AGENT"
