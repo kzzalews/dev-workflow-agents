@@ -3,17 +3,17 @@ set -euo pipefail
 
 REPO="https://github.com/kzzalews/dev-workflow-agents.git"
 REPO_DST="$HOME/.dev-workflow-agents"
-AGENTS_DST="$HOME/.claude/agents"
+AGENTS_DST="$HOME/.copilot/agents"
 AGENT_FILES=("dev-coordinator" "dev-executor" "dev-verifier" "dev-workflow")
 
 echo "╔══════════════════════════════════════════╗"
-echo "║  dev-workflow-agents — Claude Code       ║"
+echo "║  dev-workflow-agents — GitHub Copilot CLI║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-if [[ ! -d "$HOME/.claude" ]]; then
-  echo "ERROR: ~/.claude not found. Is Claude Code installed?"
-  echo "Install Claude Code first: https://claude.ai/code"
+if ! command -v copilot &>/dev/null; then
+  echo "ERROR: GitHub Copilot CLI (copilot) not found."
+  echo "Install it first: https://docs.github.com/copilot/how-tos/copilot-cli"
   exit 1
 fi
 
@@ -64,15 +64,15 @@ done
 echo ""
 echo "Installing skill (plugin)..."
 
-if claude plugins list 2>/dev/null | grep -q "dev-workflow-agents"; then
+if copilot plugin list 2>/dev/null | grep -q "dev-workflow-agents"; then
   echo "  Skill plugin already installed."
 else
   echo "  Registering marketplace..."
-  claude plugins marketplace add kzzalews/dev-workflow-agents 2>&1 | sed 's/^/  /'
+  copilot plugin marketplace add kzzalews/dev-workflow-agents 2>&1 | sed 's/^/  /' || true
 
   echo "  Installing plugin..."
-  claude plugins install dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'
+  copilot plugin install dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'
 fi
 
 echo ""
-echo "✓ Done. Restart Claude Code, then run /dev-workflow to start."
+echo "✓ Done. Start a new copilot session, then run /dev-workflow to start."

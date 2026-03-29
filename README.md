@@ -1,6 +1,6 @@
 # dev-workflow-agents
 
-Agentic development workflow for **Claude Code**, **VS Code Copilot**, and **OpenCode**.
+Agentic development workflow for **Claude Code**, **VS Code Copilot**, **OpenCode**, and **GitHub Copilot CLI**.
 
 Orchestrates a Coordinator → Executor → Verifier pipeline with an adaptive fix loop. Quality-first: the Verifier reviews code with fresh eyes, without knowledge of implementation decisions.
 
@@ -13,6 +13,7 @@ Orchestrates a Coordinator → Executor → Verifier pipeline with an adaptive f
 | Claude Code | [Claude Code CLI](https://claude.ai/code) installed |
 | VS Code Copilot | VS Code + active GitHub Copilot subscription |
 | OpenCode | [OpenCode](https://opencode.ai) + any LLM provider |
+| GitHub Copilot CLI | [Copilot CLI](https://docs.github.com/copilot/how-tos/copilot-cli) installed |
 
 ---
 
@@ -41,6 +42,14 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/i
 ```
 
 > Installs agents to `~/.config/opencode/agents/`.
+
+### GitHub Copilot CLI
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/install-github-copilot-cli.sh | bash
+```
+
+> Installs agents to `~/.copilot/agents/` and registers the `/dev-workflow` skill via `copilot plugin`.
 
 ---
 
@@ -104,15 +113,21 @@ Press **Tab** (or use your `switch_agent` keybind) to switch to the **`dev-workf
 }
 ```
 
+### GitHub Copilot CLI
+
+Type `/dev-workflow` to start the skill. Or switch to the `dev-workflow` custom agent with `copilot --agent dev-workflow`.
+
+The pipeline agents (`dev-coordinator`, `dev-executor`, `dev-verifier`, `dev-workflow`) are loaded automatically from `~/.copilot/agents/`.
+
 ---
 
 ## Default Models
 
-| Role | Claude Code | VS Code Copilot | OpenCode |
-|---|---|---|---|
-| Coordinator | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config |
-| Executor | `claude-haiku-latest` | `claude-haiku-4-5` | global config |
-| Verifier | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config |
+| Role | Claude Code | VS Code Copilot | OpenCode | GitHub Copilot CLI |
+|---|---|---|---|---|
+| Coordinator | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config | `claude-sonnet-latest` |
+| Executor | `claude-haiku-latest` | `claude-haiku-4-5` | global config | `claude-haiku-latest` |
+| Verifier | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config | `claude-sonnet-latest` |
 
 **Claude Code** uses `*-latest` aliases — automatically upgrades to the newest model version.
 
@@ -167,6 +182,9 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/u
 
 # OpenCode
 curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-opencode.sh | bash
+
+# GitHub Copilot CLI
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-github-copilot-cli.sh | bash
 ```
 
 ---
@@ -191,6 +209,13 @@ Installed files after `install-opencode.sh`:
 - `~/.config/opencode/agents/dev-coordinator.md` — Coordinator agent (subagent)
 - `~/.config/opencode/agents/dev-executor.md`    — Executor agent (subagent)
 - `~/.config/opencode/agents/dev-verifier.md`    — Verifier agent (subagent)
+
+Installed files after `install-github-copilot-cli.sh`:
+- `~/.copilot/agents/dev-coordinator.md` — Coordinator agent (claude-sonnet-latest)
+- `~/.copilot/agents/dev-executor.md`    — Executor agent (claude-haiku-latest)
+- `~/.copilot/agents/dev-verifier.md`    — Verifier agent (claude-sonnet-latest)
+- `~/.copilot/agents/dev-workflow.md`    — Workflow guide (entry point)
+- plugin `dev-workflow-agents@kzzalews-dev-workflow-agents` — skill invoked via `/dev-workflow`
 
 `<vscode-user-data>` per OS: macOS `~/Library/Application Support/Code/User`, Linux `~/.config/Code/User`, Windows `%APPDATA%\Code\User`
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_DST="$HOME/.dev-workflow-agents"
-AGENTS_DST="$HOME/.claude/agents"
+AGENTS_DST="$HOME/.copilot/agents"
 AGENT_FILES=(
   "$AGENTS_DST/dev-coordinator.md"
   "$AGENTS_DST/dev-executor.md"
@@ -10,7 +10,7 @@ AGENT_FILES=(
   "$AGENTS_DST/dev-workflow.md"
 )
 
-echo "Uninstalling dev-workflow-agents from Claude Code..."
+echo "Uninstalling dev-workflow-agents from GitHub Copilot CLI..."
 echo ""
 
 exit_code=0
@@ -28,8 +28,8 @@ done
 
 echo ""
 echo "Removing skill plugin..."
-if claude plugins list 2>/dev/null | grep -q "dev-workflow-agents"; then
-  claude plugins uninstall dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'
+if copilot plugin list 2>/dev/null | grep -q "dev-workflow-agents"; then
+  copilot plugin uninstall dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'
 else
   echo "  Skill plugin not installed, skipping."
 fi
