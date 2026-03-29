@@ -40,11 +40,15 @@ copy_with_prompt() {
   filename="$(basename "$dst_file")"
 
   if [[ -f "$dst_file" ]]; then
-    printf "  %s already exists. Overwrite? [y/N] " "$filename"
-    read -r answer
-    if [[ ! "$answer" =~ ^[Yy]$ ]]; then
-      echo "  Skipped: $filename"
-      return
+    if [[ -t 0 ]]; then
+      printf "  %s already exists. Overwrite? [Y/n] " "$filename"
+      read -r answer
+      if [[ "$answer" =~ ^[Nn]$ ]]; then
+        echo "  Skipped: $filename"
+        return
+      fi
+    else
+      echo "  Overwriting: $filename (non-interactive)"
     fi
   fi
   cp "$src" "$dst_file"
