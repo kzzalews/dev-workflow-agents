@@ -38,6 +38,9 @@ Create `.dev-workflow-state.md` in the project root:
 
 ```markdown
 ## Metadata
+- Coordinator: [model from global config]
+- Executor: [model from global config]
+- Verifier: [model from global config]
 - Mode: [simple/complex]
 - Started: [current date and time]
 - Fix iterations: 0 / max 3
@@ -115,7 +118,7 @@ Wait for the user to return with findings. Then route:
 - ARCHITECTURAL → tell user: `@dev-coordinator Plan fixes for: [ARCHITECTURAL findings]`
 - MINOR → tell user: `@dev-executor Fix directly: [MINOR findings]`
 
-Track fix iterations (max 3). After 3 iterations without resolution — escalate to user.
+Track fix iterations (max 3). If the Verifier reports the same findings as in the previous iteration (no progress), stop the loop and escalate immediately. After 3 iterations without resolution — escalate to user.
 
 ## Step 6 — Final report
 

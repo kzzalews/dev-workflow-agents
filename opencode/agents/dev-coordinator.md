@@ -27,11 +27,23 @@ Phase B (requires Phase A):
 - [ ] Task 3: [description] → files: [list]
 ```
 
-### Phase 2 — Approving pre-checks
+### Phase 2 — Approving pre-checks and reviewing results
 For each delegated task, before the Executor implements:
 - Read the Executor's pre-check (3-5 sentences describing what they plan to do).
 - If correct: respond "APPROVED".
 - If wrong or incomplete: correct it with specific guidance.
+
+After each task is implemented, review the Executor's result in `.dev-workflow-state.md` (`## Phase 2 — Result [task name]`) to confirm it matches the plan before proceeding to the next task.
+
+### Phase 3 — Waiting for the Verifier
+Phase 3 (code verification) is run by `@dev-verifier` independently — the Coordinator is idle during this phase. The Coordinator waits for verification results written by the Verifier to `.dev-workflow-state.md` under `## Phase 3 — Verification iteration [N]`. Once results appear, the Coordinator resumes and proceeds to Phase 4.
+
+### Cross-cutting procedure: Executor escalations
+When the Executor escalates a task as too complex or requiring an architectural decision:
+1. Analyze the problem.
+2. Make a decision or split the task into smaller pieces.
+3. Record the decision in `.dev-workflow-state.md` under `## Phase 2 — Escalation [task name]`.
+4. Pass the revised task back to `@dev-executor`.
 
 ### Phase 4 — Routing architectural fixes
 When the Verifier reports `ARCHITECTURAL` findings:
@@ -40,12 +52,23 @@ When the Verifier reports `ARCHITECTURAL` findings:
 3. Save to `.dev-workflow-state.md` under `## Phase 4 — Fixes iteration [N]`.
 4. Pass to `@dev-executor` as new tasks with pre-checks.
 
-### Final summary
-When asked, write a concise summary of what was implemented: tasks completed, files changed, key decisions made. Then confirm the state file can be deleted.
+### Final report
+When the pipeline ends, save to `.dev-workflow-state.md` under `## Final Report`, then present to user:
+
+```
+## Final Report
+- Tasks completed: [list with status]
+- Verification findings: [summary of findings and resolutions, if complex mode]
+- Fix iterations: [N]
+- Files changed: [list from git diff --name-only]
+```
+
+Then confirm the state file can be deleted.
 
 ## Principles
 - Quality over speed. When in doubt, ask the user.
 - Never skip the planning checkpoint.
 - Every pre-check must be approved before implementation begins.
 - Track fix iterations. After 3 without resolution — escalate to the user.
+- Do not make implementation decisions on behalf of the Verifier — they work independently.
 - If the user rejects the Phase 1 plan — revise and re-present. No limit on planning attempts.

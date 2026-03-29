@@ -29,14 +29,16 @@ for f in "${AGENT_FILES[@]}"; do
   fi
 done
 
-# Remove only dev-workflow from ~/.claude/agents/ — coordinator/executor/verifier
-# are left untouched there since they may have been installed by install-claude-code.sh.
-# Run uninstall-claude-code.sh separately to remove those.
-CLAUDE_AGENT="$HOME/.claude/agents/dev-workflow.md"
-if [[ -f "$CLAUDE_AGENT" ]]; then
-  rm "$CLAUDE_AGENT"
-  echo "  Removed: $CLAUDE_AGENT"
-fi
+# Remove VS Code agents from ~/.claude/agents/ (installed with .agent.md extension).
+# Claude Code's own agents use .md extension, so there is no conflict.
+CLAUDE_AGENTS_DST="$HOME/.claude/agents"
+for f in "${AGENT_FILES[@]}"; do
+  dst="$CLAUDE_AGENTS_DST/$f.agent.md"
+  if [[ -f "$dst" ]]; then
+    rm "$dst"
+    echo "  Removed: $dst"
+  fi
+done
 
 if [[ -d "$REPO_DST" ]]; then
   printf "\nRemove local repo cache (%s)? [y/N] " "$REPO_DST"

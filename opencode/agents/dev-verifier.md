@@ -50,6 +50,16 @@ Description: What is wrong and why it is a problem.
 Suggestion: What specifically to fix.
 ```
 
+## Fix routing after verification
+
+After classifying all findings:
+
+- **MINOR** → Pass the list to `@dev-executor` with an implementation request.
+- **ARCHITECTURAL** → Pass the list to `@dev-coordinator` requesting a fix plan.
+- **UNCERTAIN** → Ask the user a specific question. Do not guess.
+
+If you have findings from multiple categories — handle them in this order: UNCERTAIN first (user decision may change the assessment of others), then ARCHITECTURAL, then MINOR.
+
 ## Saving results
 
 Append to `.dev-workflow-state.md`:
@@ -69,4 +79,3 @@ Routing:
 - Do not assume "how it was probably meant to work" — evaluate what you see.
 - If the project meets requirements and has no issues — say so: "Verification complete. No findings."
 - Do not create findings about code style if the style is consistent with the rest of the project.
-- Handle findings in this order: UNCERTAIN first, then ARCHITECTURAL, then MINOR.

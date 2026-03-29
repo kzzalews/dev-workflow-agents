@@ -33,7 +33,7 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/i
 curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/install-vscode.sh | bash
 ```
 
-> Installs agents to the VS Code user data `agents/` directory.
+> Installs agents to the VS Code user data `agents/` directory and `~/.claude/agents/`.
 
 ### OpenCode
 
@@ -125,13 +125,11 @@ The pipeline agents (`dev-coordinator`, `dev-executor`, `dev-verifier`, `dev-wor
 
 | Role | Claude Code | VS Code Copilot | OpenCode | GitHub Copilot CLI |
 |---|---|---|---|---|
-| Coordinator | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config | `claude-sonnet-latest` |
-| Executor | `claude-haiku-latest` | `claude-haiku-4-5` | global config | `claude-haiku-latest` |
-| Verifier | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config | `claude-sonnet-latest` |
+| Coordinator | `claude-sonnet-latest` | `claude-sonnet-latest` | global config | `claude-sonnet-latest` |
+| Executor | `claude-haiku-latest` | `claude-haiku-latest` | global config | `claude-haiku-latest` |
+| Verifier | `claude-sonnet-latest` | `claude-sonnet-latest` | global config | `claude-sonnet-latest` |
 
-**Claude Code** uses `*-latest` aliases — automatically upgrades to the newest model version.
-
-**VS Code Copilot** uses fixed model IDs. Update `model:` in the agent frontmatter to upgrade.
+**Claude Code, VS Code Copilot, and GitHub Copilot CLI** use `*-latest` aliases — automatically upgrades to the newest model version.
 
 **OpenCode** agents inherit the globally configured model by default. Override per-agent via `opencode.json` (see Usage above).
 
@@ -189,6 +187,16 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/u
 
 ---
 
+## Cost Considerations
+
+The pipeline uses **Haiku** (cheapest) for the Executor and **Sonnet** for the Coordinator and Verifier. In `simple` mode, the Verifier is skipped entirely.
+
+The fix loop runs a maximum of 3 iterations. If no progress is detected (same findings repeated), the loop terminates early to avoid wasting tokens.
+
+**Tip:** For small changes, use `simple` mode to skip verification and reduce cost.
+
+---
+
 <!-- AGENT CONTEXT -->
 ## Package structure for agents
 
@@ -200,9 +208,9 @@ Installed files after `install-claude-code.sh`:
 
 Installed files after `install-vscode.sh`:
 - `<vscode-user-data>/agents/dev-workflow.agent.md`    — Workflow guide (entry point)
-- `<vscode-user-data>/agents/dev-coordinator.agent.md` — Coordinator agent (claude-sonnet-4-6)
-- `<vscode-user-data>/agents/dev-executor.agent.md`    — Executor agent (claude-haiku-4-5)
-- `<vscode-user-data>/agents/dev-verifier.agent.md`    — Verifier agent (claude-sonnet-4-6)
+- `<vscode-user-data>/agents/dev-coordinator.agent.md` — Coordinator agent (claude-sonnet-latest)
+- `<vscode-user-data>/agents/dev-executor.agent.md`    — Executor agent (claude-haiku-latest)
+- `<vscode-user-data>/agents/dev-verifier.agent.md`    — Verifier agent (claude-sonnet-latest)
 
 Installed files after `install-opencode.sh`:
 - `~/.config/opencode/agents/dev-workflow.md`    — Workflow guide (primary agent, entry point)
