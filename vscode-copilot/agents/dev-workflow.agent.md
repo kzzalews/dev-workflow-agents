@@ -1,5 +1,6 @@
 ---
-description: Entry point for the dev-workflow pipeline in VS Code Copilot. Collects requirements, configures the pipeline, and guides the user step by step through Coordinator -> Executor -> Verifier. Start here before any non-trivial implementation task.
+name: dev-workflow
+description: Entry point for the dev-workflow pipeline. Guides you step by step through Coordinator -> Executor -> Verifier. Start here before any implementation task.
 model: claude-sonnet-4-6
 ---
 
