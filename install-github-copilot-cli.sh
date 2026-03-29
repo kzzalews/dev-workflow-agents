@@ -68,7 +68,10 @@ if copilot plugin list 2>/dev/null | grep -q "dev-workflow-agents"; then
   echo "  Skill plugin already installed."
 else
   echo "  Registering marketplace..."
-  copilot plugin marketplace add kzzalews/dev-workflow-agents 2>&1 | sed 's/^/  /' || true
+  if ! copilot plugin marketplace add kzzalews/dev-workflow-agents 2>&1 | sed 's/^/  /'; then
+    echo "  WARNING: Marketplace registration failed. The skill may not be available."
+    echo "  You can retry manually: copilot plugin marketplace add kzzalews/dev-workflow-agents"
+  fi
 
   echo "  Installing plugin..."
   copilot plugin install dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'

@@ -71,14 +71,20 @@ Invoke agent `dev-coordinator` with:
 
 The Coordinator handles the pre-check → approval → Executor implementation loop on its own.
 
+If the Executor escalates a task, the Coordinator records the decision in `.dev-workflow-state.md` under `## Phase 2 — Escalation [task name]` before passing the revised task back.
+
+After each task is implemented, the Coordinator reviews the Executor's result in the state file (`## Phase 2 — Result [task name]`) to confirm it matches the plan before proceeding to the next task.
+
 ## Step 5 — Phase 3: Verification (complex mode only)
 
 If mode is `simple` — skip this step and go to Step 7.
 
+**Important:** Do not commit changes before verification — the Verifier needs to see them in the diff.
+
 Prepare context for the Verifier (ONLY these elements, nothing more):
 - User's original requirements (copied verbatim)
 - List of task titles from `.dev-workflow-state.md` (no implementation details)
-- Output of `git diff HEAD` in the project directory
+- Output of `git diff` in the project directory (staged + unstaged changes). If the diff is empty, also try `git diff HEAD` in case changes were committed.
 - Path to the project directory
 
 Invoke agent `dev-verifier` with this context.
@@ -106,8 +112,9 @@ Invoke `dev-executor` with:
 - Instruction: "Fix the listed issues. For each fix: run a pre-check, send it to the Coordinator for approval, then implement."
 
 ### After fixes
-- Update the iteration counter in `.dev-workflow-state.md`.
+- Update the iteration counter in `.dev-workflow-state.md` (the skill orchestrator is responsible for incrementing `Fix iterations`).
 - Re-invoke `dev-verifier` with the same minimal context (requirements + new `git diff HEAD` + task titles).
+- If the Verifier reports the same findings as in the previous iteration (no progress) — stop the loop immediately and escalate to the user instead of wasting remaining iterations.
 - If 3 iterations pass without "No findings" — escalate to the user:
 
 ```

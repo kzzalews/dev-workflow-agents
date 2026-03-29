@@ -88,16 +88,15 @@ for f in "${AGENT_FILES[@]}"; do
   copy_with_prompt "$REPO_DST/vscode-copilot/agents/$f.agent.md" "$AGENTS_DST/$f.agent.md"
 done
 
-# VS Code also loads agents from ~/.claude/agents/ (Claude-compatible global path).
-# Install all 4 agents there so VS Code finds them regardless of whether
-# Claude Code is installed. If Claude Code is also installed its own copies
-# of coordinator/executor/verifier will coexist without conflict.
+# VS Code Copilot also discovers agents from ~/.claude/agents/.
+# Install the VS Code variants there as well (with .agent.md extension)
+# so the pipeline works even if only this path is searched.
 CLAUDE_AGENTS_DST="$HOME/.claude/agents"
 echo ""
 echo "Installing agents to Claude agents dir ($CLAUDE_AGENTS_DST)..."
 mkdir -p "$CLAUDE_AGENTS_DST"
 for f in "${AGENT_FILES[@]}"; do
-  copy_with_prompt "$REPO_DST/claude-code/agents/$f.md" "$CLAUDE_AGENTS_DST/$f.md"
+  copy_with_prompt "$REPO_DST/vscode-copilot/agents/$f.agent.md" "$CLAUDE_AGENTS_DST/$f.agent.md"
 done
 
 echo ""
