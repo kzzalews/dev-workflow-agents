@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "kzzalews-dev-workflow-agents",
+  "description": "Multi-agent dev pipeline for Claude Code: Coordinator → Executor → Verifier",
+  "owner": {
+    "name": "kzzalews"
+  },
+  "plugins": [
+    {
+      "name": "dev-workflow-agents",
+      "description": "Multi-agent dev pipeline: Coordinator → Executor → Verifier. Invoke with /dev-workflow.",
+      "source": "./plugins/dev-workflow-agents",
+      "category": "development"
+    }
+  ]
+}

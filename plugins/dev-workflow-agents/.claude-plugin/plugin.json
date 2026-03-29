@@ -1,0 +1,10 @@
+{
+  "name": "dev-workflow-agents",
+  "version": "1.0.0",
+  "description": "Multi-agent dev pipeline for Claude Code: Coordinator → Executor → Verifier. Invoke with /dev-workflow.",
+  "author": {
+    "name": "kzzalews"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/kzzalews/dev-workflow-agents"
+}
