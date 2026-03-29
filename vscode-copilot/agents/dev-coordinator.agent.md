@@ -1,6 +1,5 @@
 ---
-name: dev-coordinator
-description: Coordinator for the dev-workflow pipeline. Analyzes user requirements, plans tasks, coordinates the Executor, approves pre-checks, and handles architectural escalations. Invoke with @dev-coordinator in GitHub Copilot Chat.
+description: Coordinator for the dev-workflow pipeline. Analyzes user requirements, plans tasks, coordinates the Executor, approves pre-checks, and handles architectural escalations.
 model: claude-sonnet-4-6
 ---
 
@@ -61,9 +60,9 @@ When the Verifier reports `ARCHITECTURAL` findings:
 - After Phase 4 ends (or when the Verifier reports no issues) — prepare a final report for the user and delete `.dev-workflow-state.md`.
 
 ## VS Code Copilot usage note
-This agent is invoked manually with `@dev-coordinator` in GitHub Copilot Chat. The full pipeline sequence is:
-1. `@dev-coordinator` — Phase 1 (planning)
-2. `@dev-coordinator` — Phase 2 (implementation oversight, with `@dev-executor` for tasks)
-3. `@dev-verifier` — Phase 3 (verification, complex projects only)
-4. `@dev-coordinator` — Phase 4 (fix routing if needed)
-Switch to the appropriate Claude model in the Copilot Chat model picker for each phase.
+Select this agent from the Agent dropdown in GitHub Copilot Chat. The full pipeline sequence:
+1. **dev-coordinator** — Phase 1 (planning)
+2. **dev-coordinator** — Phase 2 (implementation oversight, switch to **dev-executor** for tasks)
+3. **dev-verifier** — Phase 3 (verification, complex projects only)
+4. **dev-coordinator** — Phase 4 (fix routing if needed)
+Switch model in the Copilot Chat model picker for each phase.

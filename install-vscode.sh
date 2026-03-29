@@ -3,36 +3,61 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AGENTS_SRC="$SCRIPT_DIR/vscode-copilot/agents"
-AGENTS_DST="$HOME/.copilot/agents"
-
-AGENT_FILES=("dev-coordinator.md" "dev-executor.md" "dev-verifier.md")
+AGENT_FILES=("dev-coordinator.agent.md" "dev-executor.agent.md" "dev-verifier.agent.md")
 
 echo "╔══════════════════════════════════════════╗"
 echo "║  dev-workflow-agents — VS Code Copilot  ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-# Check VS Code is installed (warn only)
-if ! command -v code &>/dev/null; then
-  echo "WARNING: 'code' command not found. VS Code may not be installed or not in PATH."
-  echo "Continuing anyway..."
-  echo ""
+# Detect VS Code user data agents directory
+detect_vscode_agents_dir() {
+  case "$(uname -s)" in
+    Darwin)
+      echo "$HOME/Library/Application Support/Code/User/agents"
+      ;;
+    Linux)
+      echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents"
+      ;;
+    MINGW*|MSYS*|CYGWIN*)
+      echo "${APPDATA}/Code/User/agents"
+      ;;
+    *)
+      echo ""
+      ;;
+  esac
+}
+
+AGENTS_DST="$(detect_vscode_agents_dir)"
+
+if [[ -z "$AGENTS_DST" ]]; then
+  echo "ERROR: Unsupported OS. Install agents manually to the VS Code user data agents directory."
+  echo "See: https://code.visualstudio.com/docs/copilot/customization/custom-agents"
+  exit 1
 fi
 
-# Create destination dir if missing
-if [[ ! -d "$AGENTS_DST" ]]; then
-  echo "Creating $AGENTS_DST ..."
-  mkdir -p "$AGENTS_DST"
+echo "Target: $AGENTS_DST"
+echo ""
+
+# Warn if code CLI not found (non-fatal)
+if ! command -v code &>/dev/null; then
+  echo "WARNING: 'code' command not found — VS Code may not be installed on this machine."
+  printf "         Continue anyway? [y/N] "
+  read -r answer
+  if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+    exit 0
+  fi
+  echo ""
 fi
 
 # Helper: copy with overwrite prompt
 copy_with_prompt() {
   local src="$1"
-  local dst="$2"
+  local dst_dir="$2"
   local filename
   filename="$(basename "$src")"
 
-  if [[ -f "$dst/$filename" ]]; then
+  if [[ -f "$dst_dir/$filename" ]]; then
     printf "  %s already exists. Overwrite? [y/N] " "$filename"
     read -r answer
     if [[ ! "$answer" =~ ^[Yy]$ ]]; then
@@ -40,9 +65,11 @@ copy_with_prompt() {
       return
     fi
   fi
-  cp "$src" "$dst/$filename"
-  echo "  Installed: $dst/$filename"
+  cp "$src" "$dst_dir/$filename"
+  echo "  Installed: $dst_dir/$filename"
 }
+
+mkdir -p "$AGENTS_DST"
 
 echo "Installing agents..."
 for f in "${AGENT_FILES[@]}"; do
@@ -51,5 +78,6 @@ done
 
 echo ""
 echo "✓ Done."
-echo "  In VS Code Copilot Chat, use @dev-coordinator to start Phase 1."
-echo "  Recommended models: Coordinator/Verifier → Claude Sonnet, Executor → Claude Haiku"
+echo ""
+echo "Usage: Open GitHub Copilot Chat → click the agent selector dropdown → choose an agent."
+echo "Pipeline: dev-coordinator (plan) → dev-executor (implement) → dev-verifier (review)"

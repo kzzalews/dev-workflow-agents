@@ -70,16 +70,18 @@ Type `/dev-workflow` in Claude Code to start. You will see:
 
 ### VS Code Copilot
 
-Invoke agents manually in Copilot Chat using `@` mentions:
+Open GitHub Copilot Chat, click the **agent selector dropdown** (top of the chat panel), and choose the agent for each phase:
 
-| Phase | Command | Model (recommended) |
+| Phase | Agent | Model (recommended) |
 |---|---|---|
-| Phase 1 — Planning | `@dev-coordinator` | Claude Sonnet |
-| Phase 2 — Implementation | `@dev-executor` + `@dev-coordinator` | Haiku (executor), Sonnet (coordinator) |
-| Phase 3 — Verification | `@dev-verifier` | Claude Sonnet |
-| Phase 4 — Fix routing | `@dev-coordinator` | Claude Sonnet |
+| Phase 1 — Planning | `dev-coordinator` | Claude Sonnet |
+| Phase 2 — Implementation | `dev-executor` + `dev-coordinator` | Haiku (executor), Sonnet (coordinator) |
+| Phase 3 — Verification | `dev-verifier` | Claude Sonnet |
+| Phase 4 — Fix routing | `dev-coordinator` | Claude Sonnet |
 
 Switch models using the model picker in Copilot Chat.
+
+> Custom agents use the dropdown selector — they are NOT invoked via `@mention`. The `@mention` syntax only works for built-in chat participants (like `@github` or `@terminal`).
 
 ---
 
@@ -156,9 +158,11 @@ Installed files after `install-claude-code.sh`:
 - `~/.claude/plugins/cache/kzzalews-dev-workflow-agents/dev-workflow-agents/1.0.0/skills/dev-workflow/SKILL.md` — Orchestrating skill (invoked via /dev-workflow)
 
 Installed files after `install-vscode.sh`:
-- `~/.copilot/agents/dev-coordinator.md` — Coordinator agent (claude-sonnet-4-6)
-- `~/.copilot/agents/dev-executor.md`    — Executor agent (claude-haiku-4-5)
-- `~/.copilot/agents/dev-verifier.md`    — Verifier agent (claude-sonnet-4-6)
+- `<vscode-user-data>/agents/dev-coordinator.agent.md` — Coordinator agent (claude-sonnet-4-6)
+- `<vscode-user-data>/agents/dev-executor.agent.md`    — Executor agent (claude-haiku-4-5)
+- `<vscode-user-data>/agents/dev-verifier.agent.md`    — Verifier agent (claude-sonnet-4-6)
+
+`<vscode-user-data>` per OS: macOS `~/Library/Application Support/Code/User`, Linux `~/.config/Code/User`, Windows `%APPDATA%\Code\User`
 
 State file created at runtime (deleted on completion):
 - `.dev-workflow-state.md` — pipeline memory: plan, pre-checks, results, verification findings

@@ -1,6 +1,5 @@
 ---
-name: dev-executor
-description: Executor for the dev-workflow pipeline. Analyzes existing code (Phase 1), implements tasks with pre-check approval, escalates to the Coordinator when a task is too complex. Invoke with @dev-executor in GitHub Copilot Chat.
+description: Executor for the dev-workflow pipeline. Analyzes existing code (Phase 1), implements tasks with pre-check approval, escalates to the Coordinator when a task is too complex.
 model: claude-haiku-4-5
 ---
 

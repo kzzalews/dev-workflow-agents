@@ -1,6 +1,5 @@
 ---
-name: dev-verifier
-description: Verifier for the dev-workflow pipeline. Reviews the project with fresh eyes, without knowledge of implementation decisions. Classifies findings and routes fixes. Invoke with @dev-verifier in GitHub Copilot Chat.
+description: Verifier for the dev-workflow pipeline. Reviews the project with fresh eyes, without knowledge of implementation decisions. Classifies findings and routes fixes.
 model: claude-sonnet-4-6
 ---
 
@@ -57,8 +56,8 @@ Suggestion: What specifically to fix.
 
 After classifying all findings:
 
-- **MINOR** → Pass the list directly to the Executor (`@dev-executor`) with an implementation request.
-- **ARCHITECTURAL** → Pass the list to the Coordinator (`@dev-coordinator`) requesting a fix plan.
+- **MINOR** → Switch to the **dev-executor** agent with an implementation request.
+- **ARCHITECTURAL** → Switch to the **dev-coordinator** agent requesting a fix plan.
 - **UNCERTAIN** → Ask the user a specific question. Do not guess.
 
 If you have findings from multiple categories — handle them in this order: UNCERTAIN first (user decision may change the assessment of others), then ARCHITECTURAL, then MINOR.

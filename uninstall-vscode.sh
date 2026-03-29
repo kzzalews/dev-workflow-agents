@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-AGENTS_DST="$HOME/.copilot/agents"
+# Detect VS Code user data agents directory
+detect_vscode_agents_dir() {
+  case "$(uname -s)" in
+    Darwin)
+      echo "$HOME/Library/Application Support/Code/User/agents"
+      ;;
+    Linux)
+      echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents"
+      ;;
+    MINGW*|MSYS*|CYGWIN*)
+      echo "${APPDATA}/Code/User/agents"
+      ;;
+    *)
+      echo ""
+      ;;
+  esac
+}
+
+AGENTS_DST="$(detect_vscode_agents_dir)"
 
 FILES=(
-  "$AGENTS_DST/dev-coordinator.md"
-  "$AGENTS_DST/dev-executor.md"
-  "$AGENTS_DST/dev-verifier.md"
+  "$AGENTS_DST/dev-coordinator.agent.md"
+  "$AGENTS_DST/dev-executor.agent.md"
+  "$AGENTS_DST/dev-verifier.agent.md"
 )
 
 echo "Uninstalling dev-workflow-agents from VS Code Copilot..."
