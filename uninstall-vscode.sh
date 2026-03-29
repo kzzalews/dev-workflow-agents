@@ -1,42 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Detect VS Code user data agents directory
 detect_vscode_agents_dir() {
   case "$(uname -s)" in
-    Darwin)
-      echo "$HOME/Library/Application Support/Code/User/agents"
-      ;;
-    Linux)
-      echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents"
-      ;;
-    MINGW*|MSYS*|CYGWIN*)
-      echo "${APPDATA}/Code/User/agents"
-      ;;
-    *)
-      echo ""
-      ;;
+    Darwin)  echo "$HOME/Library/Application Support/Code/User/agents" ;;
+    Linux)   echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents" ;;
+    MINGW*|MSYS*|CYGWIN*) echo "${APPDATA}/Code/User/agents" ;;
+    *)       echo "" ;;
   esac
 }
 
 AGENTS_DST="$(detect_vscode_agents_dir)"
-
-FILES=(
-  "$AGENTS_DST/dev-coordinator.agent.md"
-  "$AGENTS_DST/dev-executor.agent.md"
-  "$AGENTS_DST/dev-verifier.agent.md"
-)
+AGENT_FILES=("dev-workflow" "dev-coordinator" "dev-executor" "dev-verifier")
 
 echo "Uninstalling dev-workflow-agents from VS Code Copilot..."
 echo ""
 
 exit_code=0
-for f in "${FILES[@]}"; do
-  if [[ -f "$f" ]]; then
-    rm "$f"
-    echo "  Removed: $f"
+for f in "${AGENT_FILES[@]}"; do
+  dst="$AGENTS_DST/$f.agent.md"
+  if [[ -f "$dst" ]]; then
+    rm "$dst"
+    echo "  Removed: $dst"
   else
-    echo "  WARNING: not found: $f"
+    echo "  WARNING: not found: $dst"
     exit_code=1
   fi
 done

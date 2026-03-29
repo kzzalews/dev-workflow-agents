@@ -1,37 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AGENTS_SRC="$SCRIPT_DIR/vscode-copilot/agents"
-AGENT_FILES=("dev-coordinator.agent.md" "dev-executor.agent.md" "dev-verifier.agent.md")
+BASE="https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main"
+AGENT_FILES=("dev-workflow" "dev-coordinator" "dev-executor" "dev-verifier")
 
 echo "╔══════════════════════════════════════════╗"
 echo "║  dev-workflow-agents — VS Code Copilot  ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
+if ! command -v curl &>/dev/null; then
+  echo "ERROR: curl is required but not installed."
+  exit 1
+fi
+
 # Detect VS Code user data agents directory
 detect_vscode_agents_dir() {
   case "$(uname -s)" in
-    Darwin)
-      echo "$HOME/Library/Application Support/Code/User/agents"
-      ;;
-    Linux)
-      echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents"
-      ;;
-    MINGW*|MSYS*|CYGWIN*)
-      echo "${APPDATA}/Code/User/agents"
-      ;;
-    *)
-      echo ""
-      ;;
+    Darwin)  echo "$HOME/Library/Application Support/Code/User/agents" ;;
+    Linux)   echo "${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/agents" ;;
+    MINGW*|MSYS*|CYGWIN*) echo "${APPDATA}/Code/User/agents" ;;
+    *)       echo "" ;;
   esac
 }
 
 AGENTS_DST="$(detect_vscode_agents_dir)"
 
 if [[ -z "$AGENTS_DST" ]]; then
-  echo "ERROR: Unsupported OS. Install agents manually to the VS Code user data agents directory."
+  echo "ERROR: Unsupported OS."
   echo "See: https://code.visualstudio.com/docs/copilot/customization/custom-agents"
   exit 1
 fi
@@ -39,25 +35,22 @@ fi
 echo "Target: $AGENTS_DST"
 echo ""
 
-# Warn if code CLI not found (non-fatal)
 if ! command -v code &>/dev/null; then
   echo "WARNING: 'code' command not found — VS Code may not be installed on this machine."
   printf "         Continue anyway? [y/N] "
   read -r answer
-  if [[ ! "$answer" =~ ^[Yy]$ ]]; then
-    exit 0
-  fi
+  if [[ ! "$answer" =~ ^[Yy]$ ]]; then exit 0; fi
   echo ""
 fi
 
-# Helper: copy with overwrite prompt
-copy_with_prompt() {
-  local src="$1"
-  local dst_dir="$2"
+# Helper: download with overwrite prompt
+download_with_prompt() {
+  local url="$1"
+  local dst_file="$2"
   local filename
-  filename="$(basename "$src")"
+  filename="$(basename "$dst_file")"
 
-  if [[ -f "$dst_dir/$filename" ]]; then
+  if [[ -f "$dst_file" ]]; then
     printf "  %s already exists. Overwrite? [y/N] " "$filename"
     read -r answer
     if [[ ! "$answer" =~ ^[Yy]$ ]]; then
@@ -65,19 +58,18 @@ copy_with_prompt() {
       return
     fi
   fi
-  cp "$src" "$dst_dir/$filename"
-  echo "  Installed: $dst_dir/$filename"
+  curl -fsSL "$url" -o "$dst_file"
+  echo "  Installed: $dst_file"
 }
 
 mkdir -p "$AGENTS_DST"
 
 echo "Installing agents..."
 for f in "${AGENT_FILES[@]}"; do
-  copy_with_prompt "$AGENTS_SRC/$f" "$AGENTS_DST"
+  download_with_prompt "$BASE/vscode-copilot/agents/$f.agent.md" "$AGENTS_DST/$f.agent.md"
 done
 
 echo ""
 echo "✓ Done."
 echo ""
-echo "Usage: Open GitHub Copilot Chat → click the agent selector dropdown → choose an agent."
-echo "Pipeline: dev-coordinator (plan) → dev-executor (implement) → dev-verifier (review)"
+echo "Usage: Open GitHub Copilot Chat → agent selector dropdown → dev-workflow"

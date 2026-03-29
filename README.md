@@ -20,27 +20,18 @@ Orchestrates a Coordinator → Executor → Verifier pipeline with an adaptive f
 ### Claude Code
 
 ```bash
-# 1. Register marketplace (once)
-claude plugins marketplace add kzzalews/dev-workflow-agents
-
-# 2. Install plugin (skill)
-claude plugins install dev-workflow-agents@kzzalews-dev-workflow-agents
-
-# 3. Install agents (bash installer)
-git clone https://github.com/kzzalews/dev-workflow-agents.git
-cd dev-workflow-agents
-./install-claude-code.sh
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/install-claude-code.sh | bash
 ```
 
-> The agents (`dev-coordinator`, `dev-executor`, `dev-verifier`) cannot be distributed via the plugin system — install them with the bash script. The skill (`/dev-workflow`) is installed via the plugin.
+> Installs agents to `~/.claude/agents/` and registers the `/dev-workflow` skill via `claude plugins`.
 
 ### VS Code Copilot
 
 ```bash
-git clone https://github.com/kzzalews/dev-workflow-agents.git
-cd dev-workflow-agents
-./install-vscode.sh
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/install-vscode.sh | bash
 ```
+
+> Installs agents to the VS Code user data `agents/` directory.
 
 ---
 
@@ -70,16 +61,14 @@ Type `/dev-workflow` in Claude Code to start. You will see:
 
 ### VS Code Copilot
 
-Open GitHub Copilot Chat, click the **agent selector dropdown** (top of the chat panel), and choose the agent for each phase:
+Select **`dev-workflow`** from the agent dropdown to start. It guides you through the entire pipeline — tells you which agent to switch to at each step and what to send.
 
-| Phase | Agent | Model (recommended) |
-|---|---|---|
-| Phase 1 — Planning | `dev-coordinator` | Claude Sonnet |
-| Phase 2 — Implementation | `dev-executor` + `dev-coordinator` | Haiku (executor), Sonnet (coordinator) |
-| Phase 3 — Verification | `dev-verifier` | Claude Sonnet |
-| Phase 4 — Fix routing | `dev-coordinator` | Claude Sonnet |
-
-Switch models using the model picker in Copilot Chat.
+| Agent | Role |
+|---|---|
+| `dev-workflow` | Entry point — collects requirements, guides the pipeline |
+| `dev-coordinator` | Planning, pre-check approval, fix routing |
+| `dev-executor` | Code analysis and implementation |
+| `dev-verifier` | Fresh-eyes code review |
 
 > Custom agents use the dropdown selector — they are NOT invoked via `@mention`. The `@mention` syntax only works for built-in chat participants (like `@github` or `@terminal`).
 
@@ -136,14 +125,11 @@ Final report + cleanup
 ## Uninstall
 
 ```bash
-# Claude Code — plugin
-claude plugins uninstall dev-workflow-agents@kzzalews-dev-workflow-agents
-
-# Claude Code — agents (bash)
-./uninstall-claude-code.sh
+# Claude Code
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-claude-code.sh | bash
 
 # VS Code Copilot
-./uninstall-vscode.sh
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-vscode.sh | bash
 ```
 
 ---

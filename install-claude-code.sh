@@ -1,31 +1,34 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AGENTS_SRC="$SCRIPT_DIR/claude-code/agents"
+BASE="https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main"
 AGENTS_DST="$HOME/.claude/agents"
-AGENT_FILES=("dev-coordinator.md" "dev-executor.md" "dev-verifier.md")
+AGENT_FILES=("dev-coordinator" "dev-executor" "dev-verifier")
 
 echo "╔══════════════════════════════════════════╗"
 echo "║  dev-workflow-agents — Claude Code       ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-# Check Claude Code is installed
 if [[ ! -d "$HOME/.claude" ]]; then
   echo "ERROR: ~/.claude not found. Is Claude Code installed?"
   echo "Install Claude Code first: https://claude.ai/code"
   exit 1
 fi
 
-# Helper: copy with overwrite prompt
-copy_with_prompt() {
-  local src="$1"
-  local dst_dir="$2"
-  local filename
-  filename="$(basename "$src")"
+if ! command -v curl &>/dev/null; then
+  echo "ERROR: curl is required but not installed."
+  exit 1
+fi
 
-  if [[ -f "$dst_dir/$filename" ]]; then
+# Helper: download with overwrite prompt
+download_with_prompt() {
+  local url="$1"
+  local dst_file="$2"
+  local filename
+  filename="$(basename "$dst_file")"
+
+  if [[ -f "$dst_file" ]]; then
     printf "  %s already exists. Overwrite? [y/N] " "$filename"
     read -r answer
     if [[ ! "$answer" =~ ^[Yy]$ ]]; then
@@ -33,21 +36,19 @@ copy_with_prompt() {
       return
     fi
   fi
-  cp "$src" "$dst_dir/$filename"
-  echo "  Installed: $dst_dir/$filename"
+  curl -fsSL "$url" -o "$dst_file"
+  echo "  Installed: $dst_file"
 }
 
-# Install agents
 echo "Installing agents..."
 mkdir -p "$AGENTS_DST"
 for f in "${AGENT_FILES[@]}"; do
-  copy_with_prompt "$AGENTS_SRC/$f" "$AGENTS_DST"
+  download_with_prompt "$BASE/claude-code/agents/$f.md" "$AGENTS_DST/$f.md"
 done
 
 echo ""
 echo "Installing skill (plugin)..."
 
-# Check if already installed
 if claude plugins list 2>/dev/null | grep -q "dev-workflow-agents"; then
   echo "  Skill plugin already installed."
 else
