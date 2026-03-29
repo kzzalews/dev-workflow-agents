@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+REPO_DST="$HOME/.dev-workflow-agents"
 AGENTS_DST="$HOME/.claude/agents"
 AGENT_FILES=(
   "$AGENTS_DST/dev-coordinator.md"
@@ -30,6 +31,15 @@ if claude plugins list 2>/dev/null | grep -q "dev-workflow-agents"; then
   claude plugins uninstall dev-workflow-agents@kzzalews-dev-workflow-agents 2>&1 | sed 's/^/  /'
 else
   echo "  Skill plugin not installed, skipping."
+fi
+
+if [[ -d "$REPO_DST" ]]; then
+  printf "\nRemove local repo cache (%s)? [y/N] " "$REPO_DST"
+  read -r answer
+  if [[ "$answer" =~ ^[Yy]$ ]]; then
+    rm -rf "$REPO_DST"
+    echo "  Removed: $REPO_DST"
+  fi
 fi
 
 echo ""

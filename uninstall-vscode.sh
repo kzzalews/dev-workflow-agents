@@ -10,6 +10,7 @@ detect_vscode_agents_dir() {
   esac
 }
 
+REPO_DST="$HOME/.dev-workflow-agents"
 AGENTS_DST="$(detect_vscode_agents_dir)"
 AGENT_FILES=("dev-workflow" "dev-coordinator" "dev-executor" "dev-verifier")
 
@@ -27,6 +28,15 @@ for f in "${AGENT_FILES[@]}"; do
     exit_code=1
   fi
 done
+
+if [[ -d "$REPO_DST" ]]; then
+  printf "\nRemove local repo cache (%s)? [y/N] " "$REPO_DST"
+  read -r answer
+  if [[ "$answer" =~ ^[Yy]$ ]]; then
+    rm -rf "$REPO_DST"
+    echo "  Removed: $REPO_DST"
+  fi
+fi
 
 echo ""
 if [[ $exit_code -eq 0 ]]; then

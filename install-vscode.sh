@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-BASE="https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main"
+REPO="https://github.com/kzzalews/dev-workflow-agents.git"
+REPO_DST="$HOME/.dev-workflow-agents"
 AGENT_FILES=("dev-workflow" "dev-coordinator" "dev-executor" "dev-verifier")
 
 echo "╔══════════════════════════════════════════╗"
@@ -9,8 +10,8 @@ echo "║  dev-workflow-agents — VS Code Copilot  ║"
 echo "╚══════════════════════════════════════════╝"
 echo ""
 
-if ! command -v curl &>/dev/null; then
-  echo "ERROR: curl is required but not installed."
+if ! command -v git &>/dev/null; then
+  echo "ERROR: git is required but not installed."
   exit 1
 fi
 
@@ -43,9 +44,19 @@ if ! command -v code &>/dev/null; then
   echo ""
 fi
 
-# Helper: download with overwrite prompt
-download_with_prompt() {
-  local url="$1"
+# Clone or update repo
+if [[ -d "$REPO_DST/.git" ]]; then
+  echo "Updating local repo ($REPO_DST)..."
+  git -C "$REPO_DST" pull --ff-only 2>&1 | sed 's/^/  /'
+else
+  echo "Cloning repo to $REPO_DST..."
+  git clone --depth=1 "$REPO" "$REPO_DST" 2>&1 | sed 's/^/  /'
+fi
+echo ""
+
+# Helper: copy with overwrite prompt
+copy_with_prompt() {
+  local src="$1"
   local dst_file="$2"
   local filename
   filename="$(basename "$dst_file")"
@@ -58,7 +69,7 @@ download_with_prompt() {
       return
     fi
   fi
-  curl -fsSL "$url" -o "$dst_file"
+  cp "$src" "$dst_file"
   echo "  Installed: $dst_file"
 }
 
@@ -66,7 +77,7 @@ mkdir -p "$AGENTS_DST"
 
 echo "Installing agents..."
 for f in "${AGENT_FILES[@]}"; do
-  download_with_prompt "$BASE/vscode-copilot/agents/$f.agent.md" "$AGENTS_DST/$f.agent.md"
+  copy_with_prompt "$REPO_DST/vscode-copilot/agents/$f.agent.md" "$AGENTS_DST/$f.agent.md"
 done
 
 echo ""
