@@ -1,6 +1,6 @@
 # dev-workflow-agents
 
-Agentic development workflow for **Claude Code** and **VS Code Copilot**.
+Agentic development workflow for **Claude Code**, **VS Code Copilot**, and **OpenCode**.
 
 Orchestrates a Coordinator → Executor → Verifier pipeline with an adaptive fix loop. Quality-first: the Verifier reviews code with fresh eyes, without knowledge of implementation decisions.
 
@@ -12,6 +12,7 @@ Orchestrates a Coordinator → Executor → Verifier pipeline with an adaptive f
 |---|---|
 | Claude Code | [Claude Code CLI](https://claude.ai/code) installed |
 | VS Code Copilot | VS Code + active GitHub Copilot subscription |
+| OpenCode | [OpenCode](https://opencode.ai) + any LLM provider |
 
 ---
 
@@ -32,6 +33,14 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/i
 ```
 
 > Installs agents to the VS Code user data `agents/` directory.
+
+### OpenCode
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/install-opencode.sh | bash
+```
+
+> Installs agents to `~/.config/opencode/agents/`.
 
 ---
 
@@ -72,19 +81,44 @@ Select **`dev-workflow`** from the agent dropdown to start. It guides you throug
 
 > Custom agents use the dropdown selector — they are NOT invoked via `@mention`. The `@mention` syntax only works for built-in chat participants (like `@github` or `@terminal`).
 
+### OpenCode
+
+Press **Tab** (or use your `switch_agent` keybind) to switch to the **`dev-workflow`** agent. Describe your task — the guide walks you through the pipeline using `@mention` for subagents within the same session.
+
+| Agent | Mode | Role |
+|---|---|---|
+| `dev-workflow` | primary | Entry point — guides the full pipeline |
+| `dev-coordinator` | subagent | Planning, pre-check approval, fix routing |
+| `dev-executor` | subagent | Code analysis and implementation |
+| `dev-verifier` | subagent | Fresh-eyes code review |
+
+**Optional: configure per-agent models** in `~/.config/opencode/opencode.json`:
+
+```json
+{
+  "agent": {
+    "dev-coordinator": { "model": "openrouter/anthropic/claude-sonnet-4-5" },
+    "dev-executor":    { "model": "openrouter/anthropic/claude-haiku-4-5" },
+    "dev-verifier":    { "model": "openrouter/anthropic/claude-sonnet-4-5" }
+  }
+}
+```
+
 ---
 
 ## Default Models
 
-| Role | Claude Code | VS Code Copilot |
-|---|---|---|
-| Coordinator | `claude-sonnet-latest` | `claude-sonnet-4-6` |
-| Executor | `claude-haiku-latest` | `claude-haiku-4-5` |
-| Verifier | `claude-sonnet-latest` | `claude-sonnet-4-6` |
+| Role | Claude Code | VS Code Copilot | OpenCode |
+|---|---|---|---|
+| Coordinator | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config |
+| Executor | `claude-haiku-latest` | `claude-haiku-4-5` | global config |
+| Verifier | `claude-sonnet-latest` | `claude-sonnet-4-6` | global config |
 
-**Claude Code** uses `*-latest` aliases — automatically upgrades to the newest model version with no config changes needed.
+**Claude Code** uses `*-latest` aliases — automatically upgrades to the newest model version.
 
 **VS Code Copilot** uses fixed model IDs. Update `model:` in the agent frontmatter to upgrade.
+
+**OpenCode** agents inherit the globally configured model by default. Override per-agent via `opencode.json` (see Usage above).
 
 ### Override models at runtime (Claude Code only)
 
@@ -130,6 +164,9 @@ curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/u
 
 # VS Code Copilot
 curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-vscode.sh | bash
+
+# OpenCode
+curl -fsSL https://raw.githubusercontent.com/kzzalews/dev-workflow-agents/main/uninstall-opencode.sh | bash
 ```
 
 ---
@@ -144,9 +181,16 @@ Installed files after `install-claude-code.sh`:
 - `~/.claude/plugins/cache/kzzalews-dev-workflow-agents/dev-workflow-agents/1.0.0/skills/dev-workflow/SKILL.md` — Orchestrating skill (invoked via /dev-workflow)
 
 Installed files after `install-vscode.sh`:
+- `<vscode-user-data>/agents/dev-workflow.agent.md`    — Workflow guide (entry point)
 - `<vscode-user-data>/agents/dev-coordinator.agent.md` — Coordinator agent (claude-sonnet-4-6)
 - `<vscode-user-data>/agents/dev-executor.agent.md`    — Executor agent (claude-haiku-4-5)
 - `<vscode-user-data>/agents/dev-verifier.agent.md`    — Verifier agent (claude-sonnet-4-6)
+
+Installed files after `install-opencode.sh`:
+- `~/.config/opencode/agents/dev-workflow.md`    — Workflow guide (primary agent, entry point)
+- `~/.config/opencode/agents/dev-coordinator.md` — Coordinator agent (subagent)
+- `~/.config/opencode/agents/dev-executor.md`    — Executor agent (subagent)
+- `~/.config/opencode/agents/dev-verifier.md`    — Verifier agent (subagent)
 
 `<vscode-user-data>` per OS: macOS `~/Library/Application Support/Code/User`, Linux `~/.config/Code/User`, Windows `%APPDATA%\Code\User`
 

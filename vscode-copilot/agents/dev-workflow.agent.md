@@ -1,6 +1,5 @@
 ---
-name: dev-workflow
-description: Entry point for the dev-workflow pipeline. Guides you step by step through Coordinator -> Executor -> Verifier. Start here before any implementation task.
+description: Entry point for the dev-workflow pipeline. Guides you through Coordinator, Executor and Verifier agents step by step. Start here before any implementation task.
 model: claude-sonnet-4-6
 ---
 
