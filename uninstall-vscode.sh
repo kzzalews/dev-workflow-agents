@@ -29,6 +29,13 @@ for f in "${AGENT_FILES[@]}"; do
   fi
 done
 
+# Also remove dev-workflow from ~/.claude/agents/ if installed there
+CLAUDE_AGENT="$HOME/.claude/agents/dev-workflow.md"
+if [[ -f "$CLAUDE_AGENT" ]]; then
+  rm "$CLAUDE_AGENT"
+  echo "  Removed: $CLAUDE_AGENT"
+fi
+
 if [[ -d "$REPO_DST" ]]; then
   printf "\nRemove local repo cache (%s)? [y/N] " "$REPO_DST"
   read -r answer

@@ -83,12 +83,27 @@ copy_with_prompt() {
 
 mkdir -p "$AGENTS_DST"
 
-echo "Installing agents..."
+echo "Installing agents to VS Code user data ($AGENTS_DST)..."
 for f in "${AGENT_FILES[@]}"; do
   copy_with_prompt "$REPO_DST/vscode-copilot/agents/$f.agent.md" "$AGENTS_DST/$f.agent.md"
 done
 
+# VS Code also loads agents from ~/.claude/agents/ (Claude-compatible global path).
+# Install dev-workflow there so it is visible alongside the other pipeline agents,
+# which are already placed in ~/.claude/agents/ by install-claude-code.sh.
+CLAUDE_AGENTS_DST="$HOME/.claude/agents"
+if [[ -d "$CLAUDE_AGENTS_DST" ]]; then
+  echo ""
+  echo "Installing dev-workflow to Claude agents dir ($CLAUDE_AGENTS_DST)..."
+  copy_with_prompt "$REPO_DST/claude-code/agents/dev-workflow.md" "$CLAUDE_AGENTS_DST/dev-workflow.md"
+else
+  echo ""
+  echo "Creating Claude agents dir and installing dev-workflow ($CLAUDE_AGENTS_DST)..."
+  mkdir -p "$CLAUDE_AGENTS_DST"
+  copy_with_prompt "$REPO_DST/claude-code/agents/dev-workflow.md" "$CLAUDE_AGENTS_DST/dev-workflow.md"
+fi
+
 echo ""
-echo "✓ Done."
+echo "Done."
 echo ""
 echo "Usage: Open GitHub Copilot Chat → agent selector dropdown → dev-workflow"
