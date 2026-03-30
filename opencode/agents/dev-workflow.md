@@ -105,6 +105,7 @@ Tell the user:
 > @dev-verifier Run Phase 3 verification.
 > Requirements: [paste original requirements]
 > Task titles: [paste task list from .dev-workflow-state.md]
+> Sprint contract: [paste sprint contract from .dev-workflow-state.md]
 > Git diff:
 > [paste git diff output here]
 > ```

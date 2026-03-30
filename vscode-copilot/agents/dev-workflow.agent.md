@@ -107,6 +107,7 @@ Tell the user:
 > Run Phase 3 verification.
 > Requirements: [paste original requirements]
 > Task titles: [paste task list from .dev-workflow-state.md]
+> Sprint contract: [paste sprint contract from .dev-workflow-state.md]
 > Git diff: [run `git diff HEAD` in the terminal and paste the output]
 > Project path: [current workspace folder]
 > ```
