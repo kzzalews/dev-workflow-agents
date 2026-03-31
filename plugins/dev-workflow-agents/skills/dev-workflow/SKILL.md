@@ -209,5 +209,6 @@ Agents MUST NOT write to sections they do not own. Agents SHOULD NOT read sectio
 - **Verifier isolation is intentional.** Never pass more than: requirements + task titles + sprint contract + git diff + project path to the Verifier.
 - **The state file is the pipeline's only memory.** Every agent reads it for current state before acting. Section ownership prevents conflicts.
 - **`*-latest` models are used by default** — they always point to the newest version of the model family.
+- **Always pass model explicitly.** When invoking any pipeline agent (coordinator, executor, verifier), pass the configured model parameter explicitly in the agent tool call. Frontmatter models may be overridden by the parent session's model if not passed explicitly — never rely on inheritance.
 - **Context resets > context accumulation.** When an agent signals CONTEXT LIMIT, re-invoke with fresh context and a structured handoff via the state file.
 
