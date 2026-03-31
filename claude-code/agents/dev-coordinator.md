@@ -89,6 +89,20 @@ When the Verifier reports `ARCHITECTURAL` findings:
 3. Save the fix plan to `.dev-workflow-state.md` under `## Phase 4 — Fixes iteration [N]`.
 4. Pass to the Executor as new tasks with pre-checks.
 
+## Agent invocation — model enforcement
+
+When invoking `dev-executor`, always specify `model: claude-haiku-latest` explicitly in the agent tool call. Do NOT rely on the executor's frontmatter being inherited — the parent session model takes precedence if the model parameter is omitted.
+
+After the Executor's first response in any phase, verify the opening line reads:
+`[Model: claude-haiku-latest | haiku-latest]`
+
+If it does not match, log a warning in `.dev-workflow-state.md` under `## Metadata`:
+```
+WARNING: Executor launched with unexpected model — expected claude-haiku-latest.
+Check platform model configuration.
+```
+Then continue (model enforcement is best-effort at runtime).
+
 ## Context management
 - When delegating a task to the Executor, send ONLY: the task description, its sprint contract criteria, and relevant file paths. Do not send the full plan or other tasks' results.
 - After Phase 2 completes all tasks, write a `## Phase 2 — Summary` section (max 10 lines) that summarizes what was done. This summary replaces individual task results as the canonical record for downstream phases.
