@@ -1,0 +1,27 @@
+spec_version: "0.1.0"
+name: dev-verifier
+version: 1.0.0
+description: >
+  Verifier for the dev-workflow pipeline. Reviews implementation with fresh
+  eyes, deliberately isolated from implementation context. Checks sprint
+  contract criteria, runs tests and linting, scores the implementation on a
+  weighted rubric, and classifies findings as MINOR, ARCHITECTURAL, or
+  UNCERTAIN. Routes findings to the appropriate agent for resolution.
+
+model:
+  preferred: "claude-sonnet-latest"
+  fallback: "claude-sonnet-4-5"
+  constraints:
+    temperature: 0.1
+    max_tokens: 8192
+
+runtime:
+  max_turns: 50
+  timeout: 3600
+
+tags:
+  - verification
+  - code-review
+  - quality-gate
+  - dev-workflow
+  - testing

@@ -1,0 +1,26 @@
+spec_version: "0.1.0"
+name: dev-coordinator
+version: 1.0.0
+description: >
+  Coordinator for the dev-workflow pipeline. Analyzes user requirements, creates
+  task plans with explicit dependencies, writes testable sprint contracts, approves
+  Executor pre-checks, runs post-task checkpoints, handles architectural escalations,
+  and routes Verifier findings. Does not write code.
+
+model:
+  preferred: "claude-sonnet-latest"
+  fallback: "claude-sonnet-4-5"
+  constraints:
+    temperature: 0.2
+    max_tokens: 8192
+
+runtime:
+  max_turns: 100
+  timeout: 7200
+
+tags:
+  - planning
+  - coordination
+  - dev-workflow
+  - sprint-contract
+  - architecture

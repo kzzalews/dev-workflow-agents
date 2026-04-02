@@ -1,0 +1,26 @@
+spec_version: "0.1.0"
+name: dev-executor
+version: 1.0.0
+description: >
+  Executor for the dev-workflow pipeline. Analyzes the existing codebase in
+  Phase 1 (read-only), then implements tasks in Phase 2 using a mandatory
+  pre-check → approval → implement → verify loop. Escalates to the Coordinator
+  when a task exceeds its authority (too complex, public API changes, ambiguous
+  alternatives). Prioritizes code quality over speed.
+
+model:
+  preferred: "claude-haiku-latest"
+  fallback: "claude-haiku-4-5-20251001"
+  constraints:
+    temperature: 0.1
+    max_tokens: 8192
+
+runtime:
+  max_turns: 150
+  timeout: 7200
+
+tags:
+  - implementation
+  - code-analysis
+  - dev-workflow
+  - executor

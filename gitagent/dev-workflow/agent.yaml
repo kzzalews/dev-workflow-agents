@@ -1,0 +1,31 @@
+spec_version: "0.1.0"
+name: dev-workflow
+version: 1.0.0
+description: >
+  Entry point for the dev-workflow multi-agent pipeline. Guides users through
+  Coordinator → Executor → Verifier phases for AI-assisted development with
+  sprint contracts and quality gates. Does not write code — orchestrates the
+  pipeline and tells the user exactly which agent to invoke and what to send.
+
+model:
+  preferred: "claude-sonnet-latest"
+  fallback: "claude-haiku-latest"
+  constraints:
+    temperature: 0.2
+    max_tokens: 4096
+
+runtime:
+  max_turns: 50
+  timeout: 3600
+
+agents:
+  - agents/dev-coordinator
+  - agents/dev-executor
+  - agents/dev-verifier
+
+tags:
+  - orchestration
+  - multi-agent
+  - dev-workflow
+  - pipeline
+  - planning
